@@ -33,6 +33,7 @@ The library provides 4 annotations
 - @IfModAbsent (checks if a mod is absent)
 - @IfMinecraftVersion (checks if the Minecraft version matches a range)
 - @IfDevEnvironment (checks if the game is running inside a development environment)
+- @IfBoolean (checks if the boolean is true)
 
 These annotations can be applied to classes to control whether the whole mixin is applied
 

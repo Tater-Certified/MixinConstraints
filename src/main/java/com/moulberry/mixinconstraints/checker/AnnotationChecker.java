@@ -1,12 +1,7 @@
 package com.moulberry.mixinconstraints.checker;
 
 import com.moulberry.mixinconstraints.MixinConstraints;
-import com.moulberry.mixinconstraints.annotations.IfDevEnvironment;
-import com.moulberry.mixinconstraints.annotations.IfMinecraftVersion;
-import com.moulberry.mixinconstraints.annotations.IfModAbsent;
-import com.moulberry.mixinconstraints.annotations.IfModAbsents;
-import com.moulberry.mixinconstraints.annotations.IfModLoaded;
-import com.moulberry.mixinconstraints.annotations.IfModLoadeds;
+import com.moulberry.mixinconstraints.annotations.*;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 
@@ -20,10 +15,12 @@ public class AnnotationChecker {
     private static final String IF_MOD_ABSENTS_DESC = Type.getDescriptor(IfModAbsents.class);
     private static final String IF_DEV_ENVIRONMENT_DESC = Type.getDescriptor(IfDevEnvironment.class);
     private static final String IF_MINECRAFT_VERSION_DESC = Type.getDescriptor(IfMinecraftVersion.class);
+    private static final String IF_BOOLEAN = Type.getDescriptor(IfBoolean.class);
 
     public static boolean isConstraintAnnotationNode(AnnotationNode node) {
         return IF_MOD_LOADED_DESC.equals(node.desc) || IS_MOD_ABSENT_DESC.equals(node.desc) ||
-            IF_DEV_ENVIRONMENT_DESC.equals(node.desc) || IF_MINECRAFT_VERSION_DESC.equals(node.desc);
+            IF_DEV_ENVIRONMENT_DESC.equals(node.desc) || IF_MINECRAFT_VERSION_DESC.equals(node.desc) ||
+                IF_BOOLEAN.equals(node.desc);
     }
 
     @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "DuplicatedCode"})
@@ -111,6 +108,15 @@ public class AnnotationChecker {
             if (MixinConstraints.VERBOSE) {
                 String result = pass ? "PASS" : "FAILED";
                 MixinConstraints.LOGGER.info("@IfMinecraftVersion(minVersion={}, maxVersion={}, negate={}) {}", minVersion, maxVersion, negate, result);
+            }
+
+            return pass;
+        } else if (IF_BOOLEAN.equals(node.desc)) {
+            boolean pass = getAnnotationValue(node, "value", true);
+
+            if (MixinConstraints.VERBOSE) {
+                String result = pass ? "PASS" : "FAILED";
+                MixinConstraints.LOGGER.info("@IfBoolean(value={}) {}", pass, result);
             }
 
             return pass;
