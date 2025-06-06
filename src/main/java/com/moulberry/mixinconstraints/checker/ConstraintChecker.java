@@ -1,6 +1,9 @@
 package com.moulberry.mixinconstraints.checker;
 
+import com.moulberry.mixinconstraints.MixinConstraints;
 import com.moulberry.mixinconstraints.util.Abstractions;
+
+import java.lang.reflect.Method;
 
 public class ConstraintChecker {
     /**
@@ -18,6 +21,32 @@ public class ConstraintChecker {
         }
 
         return false;
+    }
+
+    /**
+     * Check if the return value of a method is true
+     * @param methodPath Path to the method: "com.example.Class"
+     * @param methodName The name of the method to invoke in the class
+     * @return Return value of the method
+     */
+    public static boolean checkBooleanValue(String methodPath, String methodName) {
+        try {
+            Class<?> clazz = Class.forName(methodPath);
+
+            Method method = clazz.getMethod(methodName);
+
+            Object result = method.invoke(null);
+
+            if (result instanceof Boolean) {
+                return (Boolean) result;
+            } else {
+                MixinConstraints.LOGGER.warn("Method does not return a boolean.");
+                return false;
+            }
+        } catch (Exception e) {
+            MixinConstraints.LOGGER.warn("Failed to find class: " + e.getMessage());
+            return false;
+        }
     }
 
     /**

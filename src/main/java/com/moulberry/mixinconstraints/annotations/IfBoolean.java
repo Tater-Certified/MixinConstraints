@@ -8,5 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 public @interface IfBoolean {
-    boolean value();
+    String booleanPath();
+    String booleanMethodName();
 }
