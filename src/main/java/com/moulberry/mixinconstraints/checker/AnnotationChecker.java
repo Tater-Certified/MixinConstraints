@@ -126,14 +126,31 @@ public class AnnotationChecker {
 
             return pass;
         } else if (IF_BOOLEANS.equals(node.desc)) {
-            List<IfBoolean> ifBooleans = getAnnotationValue(node, "value", List.of());
-            for (IfBoolean ifBoolean : ifBooleans) {
+            List<AnnotationNode> ifBooleans = getAnnotationValue(node, "value", List.of());
 
-                boolean pass = ifBoolean.negate() != ConstraintChecker.checkBooleanValue(ifBoolean.booleanPath(), ifBoolean.booleanMethodName());
+            for (AnnotationNode inner : ifBooleans) {
+                String booleanPath = null;
+                String booleanMethodName = null;
+                boolean negate = false;
+
+                if (inner.values != null) {
+                    for (int i = 0; i < inner.values.size(); i += 2) {
+                        String key = (String) inner.values.get(i);
+                        Object value = inner.values.get(i + 1);
+
+                        switch (key) {
+                            case "booleanPath" -> booleanPath = (String) value;
+                            case "booleanMethodName" -> booleanMethodName = (String) value;
+                            case "negate" -> negate = (Boolean) value;
+                        }
+                    }
+                }
+
+                boolean pass = negate != ConstraintChecker.checkBooleanValue(booleanPath, booleanMethodName);
 
                 if (MixinConstraints.VERBOSE) {
                     String result = pass ? "PASS" : "FAILED";
-                    MixinConstraints.LOGGER.info("@IfBoolean(booleanPath={}, booleanMethodName={}, negate={}) {}", ifBoolean.booleanPath(), ifBoolean.booleanMethodName(), ifBoolean.negate(), result);
+                    MixinConstraints.LOGGER.info("@IfBoolean(booleanPath={}, booleanMethodName={}, negate={}) {}", booleanPath, booleanMethodName, negate, result);
                 }
 
                 if (!pass) {
