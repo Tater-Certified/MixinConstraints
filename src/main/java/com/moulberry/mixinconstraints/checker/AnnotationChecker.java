@@ -113,9 +113,10 @@ public class AnnotationChecker {
             return pass;
         } else if (IF_BOOLEAN.equals(node.desc)) {
             String booleanPath = getAnnotationValue(node, "booleanPath", null);
-            String booleanMethodName =getAnnotationValue(node, "booleanMethodName", null);
+            String booleanMethodName = getAnnotationValue(node, "booleanMethodName", null);
+            boolean negate = getAnnotationValue(node, "negate", false);
 
-            boolean pass = ConstraintChecker.checkBooleanValue(booleanPath, booleanMethodName);
+            boolean pass = negate != ConstraintChecker.checkBooleanValue(booleanPath, booleanMethodName);
 
             if (MixinConstraints.VERBOSE) {
                 String result = pass ? "PASS" : "FAILED";
