@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 public @interface IfBoolean {
     String booleanPath();
     String booleanMethodName();
-    boolean negate();
+    boolean negate() default false;
 }
