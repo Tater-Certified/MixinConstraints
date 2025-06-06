@@ -7,4 +7,4 @@ pluginManagement {
 
 rootProject.name = "MixinConstraints"
 
-include("testmod")
+//include("testmod")

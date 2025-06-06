@@ -1,3 +1,4 @@
+/*
 import xyz.wagyourtail.unimined.api.unimined
 import xyz.wagyourtail.unimined.util.OSUtils
 
@@ -109,3 +110,5 @@ unimined.minecraft(neoforge) {
         }
     }
 }
+
+ */
