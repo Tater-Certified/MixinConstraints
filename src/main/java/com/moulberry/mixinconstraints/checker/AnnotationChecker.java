@@ -16,6 +16,7 @@ public class AnnotationChecker {
     private static final String IF_DEV_ENVIRONMENT_DESC = Type.getDescriptor(IfDevEnvironment.class);
     private static final String IF_MINECRAFT_VERSION_DESC = Type.getDescriptor(IfMinecraftVersion.class);
     private static final String IF_BOOLEAN = Type.getDescriptor(IfBoolean.class);
+    private static final String IF_BOOLEANS = Type.getDescriptor(IfBooleans.class);
 
     public static boolean isConstraintAnnotationNode(AnnotationNode node) {
         return IF_MOD_LOADED_DESC.equals(node.desc) || IS_MOD_ABSENT_DESC.equals(node.desc) ||
@@ -120,10 +121,26 @@ public class AnnotationChecker {
 
             if (MixinConstraints.VERBOSE) {
                 String result = pass ? "PASS" : "FAILED";
-                MixinConstraints.LOGGER.info("@IfBoolean(booleanPath={}, booleanMethodName={}) {}", booleanPath, booleanMethodName, result);
+                MixinConstraints.LOGGER.info("@IfBoolean(booleanPath={}, booleanMethodName={}, negate={}) {}", booleanPath, booleanMethodName, negate, result);
             }
 
             return pass;
+        } else if (IF_BOOLEANS.equals(node.desc)) {
+            List<IfBoolean> ifBooleans = getAnnotationValue(node, "value", List.of());
+            for (IfBoolean ifBoolean : ifBooleans) {
+
+                boolean pass = ifBoolean.negate() != ConstraintChecker.checkBooleanValue(ifBoolean.booleanPath(), ifBoolean.booleanMethodName());
+
+                if (MixinConstraints.VERBOSE) {
+                    String result = pass ? "PASS" : "FAILED";
+                    MixinConstraints.LOGGER.info("@IfBoolean(booleanPath={}, booleanMethodName={}, negate={}) {}", ifBoolean.booleanPath(), ifBoolean.booleanMethodName(), ifBoolean.negate(), result);
+                }
+
+                if (!pass) {
+                    return false;
+                }
+            }
+            return true;
         }
         return true;
     }
