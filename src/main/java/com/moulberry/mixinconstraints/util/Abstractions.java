@@ -48,6 +48,13 @@ public abstract class Abstractions {
                 }
             }
 
+            if (doesClassExist("org.spongepowered.api.Sponge")) {
+                Abstractions instance = tryLoadAbstractionsFromClassname("com.moulberry.mixinconstraints.SpongeAbstractionsImpl");
+                if (instance != null) {
+                    abstractions.add(instance);
+                }
+            }
+
             if (abstractions.isEmpty()) {
                 throw new RuntimeException("Could not determine loader");
             }
