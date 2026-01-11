@@ -4,12 +4,10 @@ import com.google.gson.Gson;
 import com.moulberry.mixinconstraints.util.Abstractions;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.spongepowered.api.Sponge;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -55,18 +53,7 @@ public class SpongeAbstractionsImpl extends Abstractions {
 
     private static HashMap<String, String> getModVersions() {
         HashMap<String, String> map = new HashMap<>();
-        Path workingDir;
-        try {
-            workingDir = Paths.get(
-                    Sponge.class
-                            .getProtectionDomain()
-                            .getCodeSource()
-                            .getLocation()
-                            .toURI()
-            ).getParent();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
+        Path workingDir = Paths.get("");
 
         Path pluginsDir = workingDir.resolve("mods/plugins");
 
