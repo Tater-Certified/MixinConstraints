@@ -56,6 +56,8 @@ dependencies {
     "neoforgeImplementation"("net.neoforged.fancymodloader:loader:3.0.13")
 
     "igniteImplementation"("space.vectrix.ignite:ignite-api:1.2.1")
+
+    "spongeImplementation"("com.google.code.gson:gson:2.14.0")
 }
 
 tasks.jar {
