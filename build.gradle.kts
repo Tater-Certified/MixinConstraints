@@ -48,8 +48,6 @@ dependencies {
     compileOnly("org.slf4j:slf4j-api:2.0.12")
     compileOnly("org.jetbrains:annotations:24.1.0")
 
-    "spongeImplementation"("org.spongepowered:spongeapi:18.0.0-SNAPSHOT")
-
     "fabricImplementation"("net.fabricmc:fabric-loader:0.15.0")
 
     "forgeImplementation"("net.minecraftforge:fmlloader:1.20.1-47.3.27")
