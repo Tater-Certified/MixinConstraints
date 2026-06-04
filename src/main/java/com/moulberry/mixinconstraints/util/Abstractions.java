@@ -55,6 +55,13 @@ public abstract class Abstractions {
                 }
             }
 
+            if (doesClassExist("space.vectrix.ignite.Ignite")) {
+                Abstractions instance = tryLoadAbstractionsFromClassname("com.moulberry.mixinconstraints.IgniteAbstractionsImpl");
+                if (instance != null) {
+                    abstractions.add(instance);
+                }
+            }
+
             if (abstractions.isEmpty()) {
                 throw new RuntimeException("Could not determine loader");
             }

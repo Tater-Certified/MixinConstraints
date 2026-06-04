@@ -59,12 +59,13 @@ public class MixinConstraints {
             case "NeoForge" -> Loader.NEOFORGE;
             case "Fabric" -> Loader.FABRIC;
             case "Sponge" -> Loader.SPONGE;
+            case "Ignite" -> Loader.IGNITE;
             default -> Loader.CUSTOM;
         };
     }
 
     public enum Loader {
-        FORGE, NEOFORGE, FABRIC, SPONGE, CUSTOM;
+        FORGE, NEOFORGE, FABRIC, SPONGE, IGNITE, CUSTOM;
 
         @Override
         public String toString() {
@@ -73,6 +74,7 @@ public class MixinConstraints {
                 case NEOFORGE -> "NeoForge";
                 case FABRIC -> "Fabric";
                 case SPONGE -> "Sponge";
+                case IGNITE -> "Ignite";
                 case CUSTOM -> getLoaderName();
             };
         }

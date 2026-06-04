@@ -56,6 +56,8 @@ dependencies {
     "forgeImplementation"("net.minecraftforge:fmlcore:1.20.1-47.3.27")
 
     "neoforgeImplementation"("net.neoforged.fancymodloader:loader:3.0.13")
+
+    "igniteImplementation"("space.vectrix.ignite:ignite-api:1.2.1")
 }
 
 tasks.jar {

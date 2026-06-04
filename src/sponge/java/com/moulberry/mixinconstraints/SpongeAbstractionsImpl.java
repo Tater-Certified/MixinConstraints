@@ -2,9 +2,7 @@ package com.moulberry.mixinconstraints;
 
 import com.google.gson.Gson;
 import com.moulberry.mixinconstraints.util.Abstractions;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.apache.maven.artifact.versioning.Restriction;
+import com.moulberry.mixinconstraints.util.Version;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,15 +34,19 @@ public class SpongeAbstractionsImpl extends Abstractions {
 
     @Override
     protected boolean isVersionInRange(String version, String minVersion, String maxVersion, boolean minInclusive, boolean maxInclusive) {
-        ArtifactVersion currentVersion = new DefaultArtifactVersion(version);
-        ArtifactVersion min = minVersion == null ? null : new DefaultArtifactVersion(minVersion);
-        ArtifactVersion max = maxVersion == null ? null : new DefaultArtifactVersion(maxVersion);
+        Version v = new Version(version);
+        Version min = new Version(minVersion);
+        Version max = new Version(maxVersion);
 
-        if(min != null && max != null && min.compareTo(max) > 0) {
-            throw new IllegalArgumentException("minVersion (" + minVersion + ") is greater than maxVersion (" + maxVersion + ")");
+        // Check against min
+        int cmpMin = v.compareTo(min);
+        if (minInclusive ? cmpMin < 0 : cmpMin <= 0) {
+            return false;
         }
 
-        return new Restriction(min, minInclusive, max, maxInclusive).containsVersion(currentVersion);
+        // Check against max
+        int cmpMax = v.compareTo(max);
+        return maxInclusive ? cmpMax <= 0 : cmpMax < 0;
     }
 
     @Override
