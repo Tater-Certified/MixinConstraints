@@ -4,7 +4,7 @@ plugins {
     id("com.vanniktech.maven.publish") version("0.28.0") // `maven-publish` doesn't support new maven central
 }
 
-version = "1.0.8"
+version = "1.1.0"
 group = "com.moulberry.mixinconstraints"
 
 idea.module.isDownloadSources = true
@@ -38,11 +38,15 @@ val sponge: SourceSet by sourceSets.creating {
     compileClasspath += sourceSets.main.get().output
 }
 
+val ignite: SourceSet by sourceSets.creating {
+    compileClasspath += sourceSets.main.get().output
+}
+
 dependencies {
     compileOnly("org.spongepowered:mixin:0.8.5")
     compileOnly("org.ow2.asm:asm-tree:9.7")
-    implementation("org.slf4j:slf4j-api:2.0.12")
-    implementation("org.jetbrains:annotations:24.1.0")
+    compileOnly("org.slf4j:slf4j-api:2.0.12")
+    compileOnly("org.jetbrains:annotations:24.1.0")
 
     "spongeImplementation"("org.spongepowered:spongeapi:18.0.0-SNAPSHOT")
 
@@ -58,7 +62,14 @@ tasks.jar {
     from(fabric.output)
     from(forge.output)
     from(neoforge.output)
+    manifest {
+        attributes(
+            "FMLModType" to "GAMELIBRARY",
+            "Automatic-Module-Name" to "MixinConstraints"
+        )
+    }
     from(sponge.output)
+    from(ignite.output)
 }
 
 tasks.register<Jar>("sourcesJar") {

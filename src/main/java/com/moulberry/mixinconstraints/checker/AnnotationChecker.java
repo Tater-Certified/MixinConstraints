@@ -11,7 +11,7 @@ public class AnnotationChecker {
 
     private static final String IF_MOD_LOADED_DESC = Type.getDescriptor(IfModLoaded.class);
     private static final String IF_MOD_LOADEDS_DESC = Type.getDescriptor(IfModLoadeds.class);
-    private static final String IS_MOD_ABSENT_DESC = Type.getDescriptor(IfModAbsent.class);
+    private static final String IF_MOD_ABSENT_DESC = Type.getDescriptor(IfModAbsent.class);
     private static final String IF_MOD_ABSENTS_DESC = Type.getDescriptor(IfModAbsents.class);
     private static final String IF_DEV_ENVIRONMENT_DESC = Type.getDescriptor(IfDevEnvironment.class);
     private static final String IF_MINECRAFT_VERSION_DESC = Type.getDescriptor(IfMinecraftVersion.class);
@@ -19,13 +19,23 @@ public class AnnotationChecker {
     private static final String IF_BOOLEANS = Type.getDescriptor(IfBooleans.class);
 
     public static boolean isConstraintAnnotationNode(AnnotationNode node) {
-        return IF_MOD_LOADED_DESC.equals(node.desc) || IS_MOD_ABSENT_DESC.equals(node.desc) ||
-            IF_DEV_ENVIRONMENT_DESC.equals(node.desc) || IF_MINECRAFT_VERSION_DESC.equals(node.desc) ||
+        return IF_MOD_LOADED_DESC.equals(node.desc) || IF_MOD_LOADEDS_DESC.equals(node.desc) ||
+                IF_MOD_ABSENT_DESC.equals(node.desc) || IF_MOD_ABSENTS_DESC.equals(node.desc) ||
                 IF_BOOLEAN.equals(node.desc);
     }
 
     @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "DuplicatedCode"})
     public static boolean checkAnnotationNode(AnnotationNode node) {
+        if (IF_MOD_LOADEDS_DESC.equals(node.desc) || IF_MOD_ABSENTS_DESC.equals(node.desc)) {
+            List<AnnotationNode> innerNodes = getAnnotationValue(node, "value", List.of());
+            for (AnnotationNode innerNode : innerNodes) {
+                if (!checkAnnotationNode(innerNode)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         if (IF_MOD_LOADED_DESC.equals(node.desc)) {
             String value = getAnnotationValue(node, "value", "");
             if (value.isEmpty()) throw new IllegalArgumentException("modid must not be empty");
@@ -33,61 +43,35 @@ public class AnnotationChecker {
             List<String> aliases = getAnnotationValue(node, "aliases", List.of());
             String minVersion = getAnnotationValue(node, "minVersion", null);
             String maxVersion = getAnnotationValue(node, "maxVersion", null);
+            boolean minInclusive = getAnnotationValue(node, "minInclusive", true);
+            boolean maxInclusive = getAnnotationValue(node, "maxInclusive", true);
 
-            boolean pass = ConstraintChecker.checkModLoaded(value, aliases, minVersion, maxVersion);
+            boolean pass = ConstraintChecker.checkModLoaded(value, aliases, minVersion, maxVersion, minInclusive, maxInclusive);
 
             if (MixinConstraints.VERBOSE) {
                 String result = pass ? "PASS" : "FAILED";
-                MixinConstraints.LOGGER.info("@IfModLoaded(value={}, minVersion={}, maxVersion={}) {}", value, minVersion, maxVersion, result);
+                MixinConstraints.LOGGER.info("@IfModLoaded(value={}, minVersion={}, maxVersion={}, minInclusive={}, maxInclusive={}) {}", value, minVersion, maxVersion, minInclusive, maxInclusive, result);
             }
 
             return pass;
-        } else if (IF_MOD_LOADEDS_DESC.equals(node.desc)) {
-            List<IfModLoaded> ifModLoadeds = getAnnotationValue(node, "value", List.of());
-            for (IfModLoaded ifModLoaded : ifModLoadeds) {
-                boolean pass = ConstraintChecker.checkModLoaded(ifModLoaded.value(), List.of(ifModLoaded.aliases()), ifModLoaded.minVersion(), ifModLoaded.maxVersion());
-
-                if (MixinConstraints.VERBOSE) {
-                    String result = pass ? "PASS" : "FAILED";
-                    MixinConstraints.LOGGER.info("@IfModLoaded(value={}, minVersion={}, maxVersion={}) {}", ifModLoaded.value(), ifModLoaded.minVersion(), ifModLoaded.maxVersion(), result);
-                }
-
-                if (!pass) {
-                    return false;
-                }
-            }
-            return true;
-        } else if (IS_MOD_ABSENT_DESC.equals(node.desc)) {
+        } else if (IF_MOD_ABSENT_DESC.equals(node.desc)) {
             String value = getAnnotationValue(node, "value", "");
             if (value.isEmpty()) throw new IllegalArgumentException("modid must not be empty");
 
             List<String> aliases = getAnnotationValue(node, "aliases", List.of());
             String minVersion = getAnnotationValue(node, "minVersion", null);
             String maxVersion = getAnnotationValue(node, "maxVersion", null);
+            boolean minInclusive = getAnnotationValue(node, "minInclusive", true);
+            boolean maxInclusive = getAnnotationValue(node, "maxInclusive", true);
 
-            boolean pass = ConstraintChecker.checkModAbsent(value, aliases, minVersion, maxVersion);
+            boolean pass = ConstraintChecker.checkModAbsent(value, aliases, minVersion, maxVersion, minInclusive, maxInclusive);
 
             if (MixinConstraints.VERBOSE) {
                 String result = pass ? "PASS" : "FAILED";
-                MixinConstraints.LOGGER.info("@IfModAbsent(value={}, minVersion={}, maxVersion={}) {}", value, minVersion, maxVersion, result);
+                MixinConstraints.LOGGER.info("@IfModAbsent(value={}, minVersion={}, maxVersion={}, minInclusive={}, maxInclusive={}) {}", value, minVersion, maxVersion, minInclusive, maxInclusive, result);
             }
 
             return pass;
-        } else if (IF_MOD_ABSENTS_DESC.equals(node.desc)) {
-            List<IfModAbsent> ifModAbsents = getAnnotationValue(node, "value", List.of());
-            for (IfModAbsent ifModAbsent : ifModAbsents) {
-                boolean pass = ConstraintChecker.checkModAbsent(ifModAbsent.value(), List.of(ifModAbsent.aliases()), ifModAbsent.minVersion(), ifModAbsent.maxVersion());
-
-                if (MixinConstraints.VERBOSE) {
-                    String result = pass ? "PASS" : "FAILED";
-                    MixinConstraints.LOGGER.info("@IfModAbsent(value={}, minVersion={}, maxVersion={}) {}", ifModAbsent.value(), ifModAbsent.minVersion(), ifModAbsent.maxVersion(), result);
-                }
-
-                if (!pass) {
-                    return false;
-                }
-            }
-            return true;
         } else if (IF_DEV_ENVIRONMENT_DESC.equals(node.desc)) {
             boolean negate = getAnnotationValue(node, "negate", false);
 
@@ -103,12 +87,14 @@ public class AnnotationChecker {
             String minVersion = getAnnotationValue(node, "minVersion", null);
             String maxVersion = getAnnotationValue(node, "maxVersion", null);
             boolean negate = getAnnotationValue(node, "negate", false);
+            boolean minInclusive = getAnnotationValue(node, "minInclusive", true);
+            boolean maxInclusive = getAnnotationValue(node, "maxInclusive", true);
 
-            boolean pass = ConstraintChecker.checkMinecraftVersion(minVersion, maxVersion) != negate;
+            boolean pass = ConstraintChecker.checkMinecraftVersion(minVersion, maxVersion, minInclusive, maxInclusive) != negate;
 
             if (MixinConstraints.VERBOSE) {
                 String result = pass ? "PASS" : "FAILED";
-                MixinConstraints.LOGGER.info("@IfMinecraftVersion(minVersion={}, maxVersion={}, negate={}) {}", minVersion, maxVersion, negate, result);
+                MixinConstraints.LOGGER.info("@IfMinecraftVersion(minVersion={}, maxVersion={}, negate={}, minInclusive={}, maxInclusive={}) {}", minVersion, maxVersion, minInclusive, maxInclusive, negate, result);
             }
 
             return pass;
