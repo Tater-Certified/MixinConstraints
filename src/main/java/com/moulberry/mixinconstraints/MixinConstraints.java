@@ -4,16 +4,15 @@ import com.moulberry.mixinconstraints.checker.AnnotationChecker;
 import com.moulberry.mixinconstraints.util.Abstractions;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.spongepowered.asm.logging.ILogger;
 import org.spongepowered.asm.service.MixinService;
 
 import java.io.IOException;
 
 public class MixinConstraints {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger("mixinconstraints");
     public static final boolean VERBOSE = "true".equals(System.getProperty("mixinconstraints.verbose"));
+    public static final ILogger LOGGER = MixinService.getService().getLogger("mixinconstraints");
 
     public static boolean shouldApplyMixin(String mixinClassName) {
         try {
@@ -39,10 +38,6 @@ public class MixinConstraints {
         } catch (ClassNotFoundException | IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        return shouldApplyMixin(mixinClassName);
     }
 
     public static String getLoaderName() {
