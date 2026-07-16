@@ -5,7 +5,7 @@ plugins {
 }
 
 version = "1.1.0"
-group = "com.moulberry.mixinconstraints"
+group = "com.github.tatercertified.mixinconstraints"
 
 idea.module.isDownloadSources = true
 
