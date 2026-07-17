@@ -30,33 +30,33 @@ public abstract class Abstractions {
             }
 
             if (doesClassExist("net.neoforged.fml.loading.FMLLoader")) {
-                Abstractions instance = tryLoadAbstractionsFromClassname("com.moulberry.mixinconstraints.NeoForgeAbstractionsImpl");
+                Abstractions instance = tryLoadAbstractionsFromClassname("com.github.tatercertified.mixinconstraints.NeoForgeAbstractionsImpl");
                 if (instance != null) {
                     abstractions.add(instance);
                 }
             }
             if (doesClassExist("net.minecraftforge.fml.loading.FMLLoader")) {
-                Abstractions instance = tryLoadAbstractionsFromClassname("com.moulberry.mixinconstraints.ForgeAbstractionsImpl");
+                Abstractions instance = tryLoadAbstractionsFromClassname("com.github.tatercertified.mixinconstraints.ForgeAbstractionsImpl");
                 if (instance != null) {
                     abstractions.add(instance);
                 }
             }
             if (doesClassExist("net.fabricmc.loader.api.FabricLoader")) {
-                Abstractions instance = tryLoadAbstractionsFromClassname("com.moulberry.mixinconstraints.FabricAbstractionsImpl");
+                Abstractions instance = tryLoadAbstractionsFromClassname("com.github.tatercertified.mixinconstraints.FabricAbstractionsImpl");
                 if (instance != null) {
                     abstractions.add(instance);
                 }
             }
 
             if (doesClassExist("org.spongepowered.api.Sponge")) {
-                Abstractions instance = tryLoadAbstractionsFromClassname("com.moulberry.mixinconstraints.SpongeAbstractionsImpl");
+                Abstractions instance = tryLoadAbstractionsFromClassname("com.github.tatercertified.mixinconstraints.SpongeAbstractionsImpl");
                 if (instance != null) {
                     abstractions.add(instance);
                 }
             }
 
             if (doesClassExist("space.vectrix.ignite.Ignite")) {
-                Abstractions instance = tryLoadAbstractionsFromClassname("com.moulberry.mixinconstraints.IgniteAbstractionsImpl");
+                Abstractions instance = tryLoadAbstractionsFromClassname("com.github.tatercertified.mixinconstraints.IgniteAbstractionsImpl");
                 if (instance != null) {
                     abstractions.add(instance);
                 }
